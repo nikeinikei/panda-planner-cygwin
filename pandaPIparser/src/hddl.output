@@ -1,0 +1,3572 @@
+Terminals unused in grammar
+
+    FLOAT
+
+
+Grammar
+
+    0 $accept: document $end
+
+    1 document: domain
+    2         | problem
+
+    3 domain: '(' KEY_DEFINE '(' KEY_DOMAIN domain_symbol ')' domain_defs ')'
+
+    4 domain_defs: domain_defs require_def
+    5            | domain_defs type_def
+    6            | domain_defs const_def
+    7            | domain_defs predicates_def
+    8            | domain_defs functions_def
+    9            | domain_defs task_def
+   10            | domain_defs method_def
+   11            | %empty
+
+   12 problem: '(' KEY_DEFINE '(' KEY_PROBLEM NAME ')' '(' KEY_DOMAIN NAME ')' problem_defs ')'
+
+   13 problem_defs: problem_defs require_def
+   14             | problem_defs p_object_declaration
+   15             | problem_defs p_htn
+   16             | problem_defs p_init
+   17             | problem_defs p_goal
+   18             | problem_defs p_constraint
+   19             | problem_defs p_metric
+   20             | problem_defs p_utility
+   21             | problem_defs p_cost_bound
+   22             | %empty
+
+   23 p_object_declaration: '(' KEY_OBJECTS constant_declaration_list ')'
+
+   24 p_init: '(' KEY_INIT init_el ')'
+
+   25 init_el: init_el literal
+   26        | init_el '(' '=' literal INT ')'
+   27        | %empty
+
+   28 p_goal: '(' KEY_GOAL gd ')'
+
+   29 htn_type: KEY_HTN
+   30         | KEY_TIHTN
+
+   31 parameters-option: KEY_PARAMETERS '(' typed_or_untyped_var_list ')'
+   32                  | %empty
+
+   33 p_htn: '(' htn_type parameters-option tasknetwork_def ')'
+
+   34 p_constraint: '(' KEY_CONSTRAINTS gd ')'
+
+   35 p_metric: '(' KEY_METRIC KEY_MIMIZE metric_f_exp ')'
+
+   36 metric_f_exp: NAME
+   37             | '(' NAME ')'
+
+   38 p_utility: '(' KEY_UTILITY utility_list ')'
+
+   39 utility_list: '(' '=' atomic_formula INT ')' utility_list
+   40             | %empty
+
+   41 p_cost_bound: '(' KEY_BOUND INT ')'
+
+   42 domain_symbol: NAME
+
+   43 require_def: '(' KEY_REQUIREMENTS require_defs ')'
+
+   44 require_defs: require_defs REQUIRE_NAME
+   45             | %empty
+
+   46 type_def: '(' KEY_TYPES type_def_list ')'
+
+   47 type_def_list: %empty
+   48              | NAME-list-non-empty
+   49              | NAME-list-non-empty '-' NAME type_def_list
+
+   50 const_def: '(' KEY_CONSTANTS constant_declaration_list ')'
+
+   51 constant_declaration_list: %empty
+   52                          | NAME-list-non-empty
+   53                          | NAME-list-non-empty '-' NAME constant_declaration_list_with_type
+
+   54 constant_declaration_list_with_type: constant_declaration_list_with_type constant_declarations
+   55                                    | %empty
+
+   56 constant_declarations: NAME-list-non-empty '-' NAME
+
+   57 predicates_def: '(' KEY_PREDICATES atomic_predicate_def-list ')'
+
+   58 atomic_predicate_def-list: atomic_predicate_def-list atomic_predicate_def
+   59                          | %empty
+
+   60 atomic_predicate_def: '(' NAME typed_or_untyped_var_list ')'
+
+   61 functions_def: '(' KEY_FUNCTIONS typed_atomic_function_def-list ')'
+
+   62 typed_atomic_function_def-list: atomic_function_def-list typed_function_list_continuation
+
+   63 typed_function_list_continuation: '-' NAME typed_atomic_function_def-list
+   64                                 | %empty
+
+   65 atomic_function_def-list: atomic_function_def-list atomic_predicate_def
+   66                         | %empty
+
+   67 task_or_action: KEY_TASK
+   68               | KEY_ACTION
+
+   69 task_def: '(' task_or_action NAME parameters-option precondition_option effect_option ')'
+
+   70 precondition_option: KEY_PRECONDITION gd
+   71                    | %empty
+
+   72 effect_option: KEY_EFFECT effect
+   73              | %empty
+
+   74 method_def: '(' KEY_METHOD NAME parameters-option KEY_TASK '(' NAME var_or_const-list ')' precondition_option effect_option tasknetwork_def ')'
+
+   75 tasknetwork_def: subtasks_option ordering_option constraints_option causal_links_option
+
+   76 subtasks_option: KEY_TASKS subtask_defs
+   77                | KEY_ORDER_TASKS subtask_defs
+   78                | %empty
+
+   79 ordering_option: KEY_ORDER ordering_defs
+   80                | %empty
+
+   81 constraints_option: KEY_CONSTRAINTS constraint_def
+   82                   | %empty
+
+   83 causal_links_option: KEY_CAUSAL_LINKS causallink_defs
+   84                    | %empty
+
+   85 subtask_defs: '(' ')'
+   86             | subtask_def
+   87             | '(' KEY_AND subtask_def-list ')'
+
+   88 subtask_def-list: subtask_def-list subtask_def
+   89                 | %empty
+
+   90 subtask_def: '(' NAME var_or_const-list ')'
+   91            | '(' NAME '(' NAME var_or_const-list ')' ')'
+
+   92 ordering_defs: '(' ')'
+   93              | ordering_def
+   94              | '(' KEY_AND ordering_def-list ')'
+
+   95 ordering_def-list: ordering_def-list ordering_def
+   96                  | %empty
+
+   97 ordering_def: '(' NAME '<' NAME ')'
+   98             | '(' '<' NAME NAME ')'
+
+   99 constraint_def-list: constraint_def-list constraint_def
+  100                    | %empty
+
+  101 constraint_def: '(' ')'
+  102               | '(' KEY_AND constraint_def-list ')'
+  103               | '(' '=' var_or_const var_or_const ')'
+  104               | '(' KEY_NOT '(' '=' var_or_const var_or_const ')' ')'
+  105               | '(' KEY_TYPEOF typed_var ')'
+  106               | '(' KEY_NOT '(' KEY_TYPEOF typed_var ')' ')'
+
+  107 causallink_defs: '(' ')'
+  108                | causallink_def
+  109                | '(' KEY_AND causallink_def-list ')'
+
+  110 causallink_def-list: causallink_def-list causallink_def
+  111                    | %empty
+
+  112 causallink_def: '(' NAME literal NAME ')'
+
+  113 gd: gd_empty
+  114   | atomic_formula
+  115   | gd_negation
+  116   | gd_implication
+  117   | gd_conjuction
+  118   | gd_disjuction
+  119   | gd_existential
+  120   | gd_universal
+  121   | gd_equality_constraint
+
+  122 gd-list: gd-list gd
+  123        | %empty
+
+  124 gd_empty: '(' ')'
+
+  125 gd_conjuction: '(' KEY_AND gd-list ')'
+
+  126 gd_disjuction: '(' KEY_OR gd-list ')'
+
+  127 gd_negation: '(' KEY_NOT gd ')'
+
+  128 gd_implication: '(' KEY_IMPLY gd gd ')'
+
+  129 gd_existential: '(' KEY_EXISTS '(' typed_or_untyped_var_list ')' gd ')'
+
+  130 gd_universal: '(' KEY_FORALL '(' typed_or_untyped_var_list ')' gd ')'
+
+  131 gd_equality_constraint: '(' '=' var_or_const var_or_const ')'
+
+  132 var_or_const-list: var_or_const-list NAME
+  133                  | var_or_const-list VAR_NAME
+  134                  | %empty
+
+  135 var_or_const: NAME
+  136             | VAR_NAME
+
+  137 atomic_formula: '(' NAME var_or_const-list ')'
+
+  138 effect-list: effect-list effect
+  139            | %empty
+
+  140 effect: eff_empty
+  141       | eff_conjunction
+  142       | eff_universal
+  143       | eff_conditional
+  144       | literal
+  145       | p_effect
+
+  146 eff_empty: '(' ')'
+
+  147 eff_conjunction: '(' KEY_AND effect-list ')'
+
+  148 eff_universal: '(' KEY_FORALL '(' typed_or_untyped_var_list ')' effect ')'
+
+  149 eff_conditional: '(' KEY_WHEN gd effect ')'
+
+  150 literal: neg_atomic_formula
+  151        | atomic_formula
+
+  152 neg_atomic_formula: '(' KEY_NOT atomic_formula ')'
+
+  153 p_effect: '(' assign_op f_head f_exp ')'
+
+  154 assign_op: KEY_INCREASE
+
+  155 f_head: NAME
+  156       | '(' NAME var_or_const-list ')'
+
+  157 f_exp: INT
+  158      | f_head
+
+  159 NAME-list-non-empty: NAME NAME-list
+
+  160 NAME-list: NAME-list NAME
+  161          | %empty
+
+  162 VAR_NAME-list-non-empty: VAR_NAME-list VAR_NAME
+
+  163 VAR_NAME-list: VAR_NAME-list VAR_NAME
+  164              | %empty
+
+  165 typed_vars: VAR_NAME-list-non-empty '-' NAME
+
+  166 typed_var: VAR_NAME '-' NAME
+
+  167 typed_or_untyped_var_list: %empty
+  168                          | VAR_NAME-list-non-empty
+  169                          | VAR_NAME-list-non-empty '-' NAME typed_var_list
+
+  170 typed_var_list: typed_var_list typed_vars
+  171               | %empty
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '(' (40) 3 12 23 24 26 28 31 33 34 35 37 38 39 41 43 46 50 57 60 61 69 74 85 87 90 91 92 94 97 98 101 102 103 104 105 106 107 109 112 124 125 126 127 128 129 130 131 137 146 147 148 149 152 153 156
+    ')' (41) 3 12 23 24 26 28 31 33 34 35 37 38 39 41 43 46 50 57 60 61 69 74 85 87 90 91 92 94 97 98 101 102 103 104 105 106 107 109 112 124 125 126 127 128 129 130 131 137 146 147 148 149 152 153 156
+    '-' (45) 49 53 56 63 165 166 169
+    '<' (60) 97 98
+    '=' (61) 26 39 103 104 131
+    error (256)
+    KEY_TYPES (258) 46
+    KEY_DEFINE (259) 3 12
+    KEY_DOMAIN (260) 3 12
+    KEY_PROBLEM (261) 12
+    KEY_REQUIREMENTS (262) 43
+    KEY_PREDICATES (263) 57
+    KEY_FUNCTIONS (264) 61
+    KEY_TASK (265) 67 74
+    KEY_CONSTANTS (266) 50
+    KEY_ACTION (267) 68
+    KEY_PARAMETERS (268) 31
+    KEY_PRECONDITION (269) 70
+    KEY_EFFECT (270) 72
+    KEY_METHOD (271) 74
+    KEY_GOAL (272) 28
+    KEY_INIT (273) 24
+    KEY_OBJECTS (274) 23
+    KEY_HTN (275) 29
+    KEY_TIHTN (276) 30
+    KEY_MIMIZE (277) 35
+    KEY_METRIC (278) 35
+    KEY_UTILITY (279) 38
+    KEY_BOUND (280) 41
+    KEY_AND (281) 87 94 102 109 125 147
+    KEY_OR (282) 126
+    KEY_NOT (283) 104 106 127 152
+    KEY_IMPLY (284) 128
+    KEY_FORALL (285) 130 148
+    KEY_EXISTS (286) 129
+    KEY_WHEN (287) 149
+    KEY_INCREASE (288) 154
+    KEY_TYPEOF (289) 105 106
+    KEY_CAUSAL_LINKS (290) 83
+    KEY_CONSTRAINTS (291) 34 81
+    KEY_ORDER (292) 79
+    KEY_ORDER_TASKS (293) 77
+    KEY_TASKS (294) 76
+    NAME <sval> (295) 12 36 37 42 49 53 56 60 63 69 74 90 91 97 98 112 132 135 137 155 156 159 160 165 166 169
+    REQUIRE_NAME <sval> (296) 44
+    VAR_NAME <sval> (297) 133 136 162 163 166
+    FLOAT <fval> (298)
+    INT <ival> (299) 26 39 41 157
+
+
+Nonterminals, with rules where they appear
+
+    $accept (50)
+        on left: 0
+    document (51)
+        on left: 1 2
+        on right: 0
+    domain (52)
+        on left: 3
+        on right: 1
+    domain_defs (53)
+        on left: 4 5 6 7 8 9 10 11
+        on right: 3 4 5 6 7 8 9 10
+    problem (54)
+        on left: 12
+        on right: 2
+    problem_defs (55)
+        on left: 13 14 15 16 17 18 19 20 21 22
+        on right: 12 13 14 15 16 17 18 19 20 21
+    p_object_declaration (56)
+        on left: 23
+        on right: 14
+    p_init (57)
+        on left: 24
+        on right: 16
+    init_el (58)
+        on left: 25 26 27
+        on right: 24 25 26
+    p_goal (59)
+        on left: 28
+        on right: 17
+    htn_type (60)
+        on left: 29 30
+        on right: 33
+    parameters-option <vardecl> (61)
+        on left: 31 32
+        on right: 33 69 74
+    p_htn (62)
+        on left: 33
+        on right: 15
+    p_constraint (63)
+        on left: 34
+        on right: 18
+    p_metric (64)
+        on left: 35
+        on right: 19
+    metric_f_exp (65)
+        on left: 36 37
+        on right: 35
+    p_utility (66)
+        on left: 38
+        on right: 20
+    utility_list (67)
+        on left: 39 40
+        on right: 38 39
+    p_cost_bound (68)
+        on left: 41
+        on right: 21
+    domain_symbol (69)
+        on left: 42
+        on right: 3
+    require_def (70)
+        on left: 43
+        on right: 4 13
+    require_defs (71)
+        on left: 44 45
+        on right: 43 44
+    type_def (72)
+        on left: 46
+        on right: 5
+    type_def_list (73)
+        on left: 47 48 49
+        on right: 46 49
+    const_def (74)
+        on left: 50
+        on right: 6
+    constant_declaration_list (75)
+        on left: 51 52 53
+        on right: 23 50
+    constant_declaration_list_with_type (76)
+        on left: 54 55
+        on right: 53 54
+    constant_declarations (77)
+        on left: 56
+        on right: 54
+    predicates_def (78)
+        on left: 57
+        on right: 7
+    atomic_predicate_def-list (79)
+        on left: 58 59
+        on right: 57 58
+    atomic_predicate_def <preddecl> (80)
+        on left: 60
+        on right: 58 65
+    functions_def (81)
+        on left: 61
+        on right: 8
+    typed_atomic_function_def-list (82)
+        on left: 62
+        on right: 61 63
+    typed_function_list_continuation <sval> (83)
+        on left: 63 64
+        on right: 62
+    atomic_function_def-list <preddecllist> (84)
+        on left: 65 66
+        on right: 62 65
+    task_or_action <bval> (85)
+        on left: 67 68
+        on right: 69
+    task_def (86)
+        on left: 69
+        on right: 9
+    precondition_option <formula> (87)
+        on left: 70 71
+        on right: 69 74
+    effect_option <formula> (88)
+        on left: 72 73
+        on right: 69 74
+    method_def (89)
+        on left: 74
+        on right: 10
+    tasknetwork_def <tasknetwork> (90)
+        on left: 75
+        on right: 33 74
+    subtasks_option <osubtasks> (91)
+        on left: 76 77 78
+        on right: 75
+    ordering_option <spairlist> (92)
+        on left: 79 80
+        on right: 75
+    constraints_option <formula> (93)
+        on left: 81 82
+        on right: 75
+    causal_links_option (94)
+        on left: 83 84
+        on right: 75
+    subtask_defs <subtasks> (95)
+        on left: 85 86 87
+        on right: 76 77
+    subtask_def-list <subtasks> (96)
+        on left: 88 89
+        on right: 87 88
+    subtask_def <subtask> (97)
+        on left: 90 91
+        on right: 86 88
+    ordering_defs <spairlist> (98)
+        on left: 92 93 94
+        on right: 79
+    ordering_def-list <spairlist> (99)
+        on left: 95 96
+        on right: 94 95
+    ordering_def <spair> (100)
+        on left: 97 98
+        on right: 93 95
+    constraint_def-list <formulae> (101)
+        on left: 99 100
+        on right: 99 102
+    constraint_def <formula> (102)
+        on left: 101 102 103 104 105 106
+        on right: 81 99
+    causallink_defs (103)
+        on left: 107 108 109
+        on right: 83
+    causallink_def-list (104)
+        on left: 110 111
+        on right: 109 110
+    causallink_def (105)
+        on left: 112
+        on right: 108 110
+    gd <formula> (106)
+        on left: 113 114 115 116 117 118 119 120 121
+        on right: 28 34 70 122 127 128 129 130 149
+    gd-list <formulae> (107)
+        on left: 122 123
+        on right: 122 125 126
+    gd_empty <formula> (108)
+        on left: 124
+        on right: 113
+    gd_conjuction <formula> (109)
+        on left: 125
+        on right: 117
+    gd_disjuction <formula> (110)
+        on left: 126
+        on right: 118
+    gd_negation <formula> (111)
+        on left: 127
+        on right: 115
+    gd_implication <formula> (112)
+        on left: 128
+        on right: 116
+    gd_existential <formula> (113)
+        on left: 129
+        on right: 119
+    gd_universal <formula> (114)
+        on left: 130
+        on right: 120
+    gd_equality_constraint <formula> (115)
+        on left: 131
+        on right: 121
+    var_or_const-list <varandconst> (116)
+        on left: 132 133 134
+        on right: 74 90 91 132 133 137 156
+    var_or_const <sval> (117)
+        on left: 135 136
+        on right: 103 104 131
+    atomic_formula <formula> (118)
+        on left: 137
+        on right: 39 114 151 152
+    effect-list <formulae> (119)
+        on left: 138 139
+        on right: 138 147
+    effect <formula> (120)
+        on left: 140 141 142 143 144 145
+        on right: 72 138 148 149
+    eff_empty <formula> (121)
+        on left: 146
+        on right: 140
+    eff_conjunction <formula> (122)
+        on left: 147
+        on right: 141
+    eff_universal <formula> (123)
+        on left: 148
+        on right: 142
+    eff_conditional <formula> (124)
+        on left: 149
+        on right: 143
+    literal <formula> (125)
+        on left: 150 151
+        on right: 25 26 112 144
+    neg_atomic_formula <formula> (126)
+        on left: 152
+        on right: 150
+    p_effect <formula> (127)
+        on left: 153
+        on right: 145
+    assign_op (128)
+        on left: 154
+        on right: 153
+    f_head <formula> (129)
+        on left: 155 156
+        on right: 153 158
+    f_exp <formula> (130)
+        on left: 157 158
+        on right: 153
+    NAME-list-non-empty <vstring> (131)
+        on left: 159
+        on right: 48 49 52 53 56
+    NAME-list <vstring> (132)
+        on left: 160 161
+        on right: 159 160
+    VAR_NAME-list-non-empty <vstring> (133)
+        on left: 162
+        on right: 165 168 169
+    VAR_NAME-list <vstring> (134)
+        on left: 163 164
+        on right: 162 163
+    typed_vars <vardecl> (135)
+        on left: 165
+        on right: 170
+    typed_var <vardecl> (136)
+        on left: 166
+        on right: 105 106
+    typed_or_untyped_var_list <vardecl> (137)
+        on left: 167 168 169
+        on right: 31 60 129 130 148
+    typed_var_list <vardecl> (138)
+        on left: 170 171
+        on right: 169 170
+
+
+State 0
+
+    0 $accept: . document $end
+
+    '('  shift, and go to state 1
+
+    document  go to state 2
+    domain    go to state 3
+    problem   go to state 4
+
+
+State 1
+
+    3 domain: '(' . KEY_DEFINE '(' KEY_DOMAIN domain_symbol ')' domain_defs ')'
+   12 problem: '(' . KEY_DEFINE '(' KEY_PROBLEM NAME ')' '(' KEY_DOMAIN NAME ')' problem_defs ')'
+
+    KEY_DEFINE  shift, and go to state 5
+
+
+State 2
+
+    0 $accept: document . $end
+
+    $end  shift, and go to state 6
+
+
+State 3
+
+    1 document: domain .
+
+    $default  reduce using rule 1 (document)
+
+
+State 4
+
+    2 document: problem .
+
+    $default  reduce using rule 2 (document)
+
+
+State 5
+
+    3 domain: '(' KEY_DEFINE . '(' KEY_DOMAIN domain_symbol ')' domain_defs ')'
+   12 problem: '(' KEY_DEFINE . '(' KEY_PROBLEM NAME ')' '(' KEY_DOMAIN NAME ')' problem_defs ')'
+
+    '('  shift, and go to state 7
+
+
+State 6
+
+    0 $accept: document $end .
+
+    $default  accept
+
+
+State 7
+
+    3 domain: '(' KEY_DEFINE '(' . KEY_DOMAIN domain_symbol ')' domain_defs ')'
+   12 problem: '(' KEY_DEFINE '(' . KEY_PROBLEM NAME ')' '(' KEY_DOMAIN NAME ')' problem_defs ')'
+
+    KEY_DOMAIN   shift, and go to state 8
+    KEY_PROBLEM  shift, and go to state 9
+
+
+State 8
+
+    3 domain: '(' KEY_DEFINE '(' KEY_DOMAIN . domain_symbol ')' domain_defs ')'
+
+    NAME  shift, and go to state 10
+
+    domain_symbol  go to state 11
+
+
+State 9
+
+   12 problem: '(' KEY_DEFINE '(' KEY_PROBLEM . NAME ')' '(' KEY_DOMAIN NAME ')' problem_defs ')'
+
+    NAME  shift, and go to state 12
+
+
+State 10
+
+   42 domain_symbol: NAME .
+
+    $default  reduce using rule 42 (domain_symbol)
+
+
+State 11
+
+    3 domain: '(' KEY_DEFINE '(' KEY_DOMAIN domain_symbol . ')' domain_defs ')'
+
+    ')'  shift, and go to state 13
+
+
+State 12
+
+   12 problem: '(' KEY_DEFINE '(' KEY_PROBLEM NAME . ')' '(' KEY_DOMAIN NAME ')' problem_defs ')'
+
+    ')'  shift, and go to state 14
+
+
+State 13
+
+    3 domain: '(' KEY_DEFINE '(' KEY_DOMAIN domain_symbol ')' . domain_defs ')'
+
+    $default  reduce using rule 11 (domain_defs)
+
+    domain_defs  go to state 15
+
+
+State 14
+
+   12 problem: '(' KEY_DEFINE '(' KEY_PROBLEM NAME ')' . '(' KEY_DOMAIN NAME ')' problem_defs ')'
+
+    '('  shift, and go to state 16
+
+
+State 15
+
+    3 domain: '(' KEY_DEFINE '(' KEY_DOMAIN domain_symbol ')' domain_defs . ')'
+    4 domain_defs: domain_defs . require_def
+    5            | domain_defs . type_def
+    6            | domain_defs . const_def
+    7            | domain_defs . predicates_def
+    8            | domain_defs . functions_def
+    9            | domain_defs . task_def
+   10            | domain_defs . method_def
+
+    '('  shift, and go to state 17
+    ')'  shift, and go to state 18
+
+    require_def     go to state 19
+    type_def        go to state 20
+    const_def       go to state 21
+    predicates_def  go to state 22
+    functions_def   go to state 23
+    task_def        go to state 24
+    method_def      go to state 25
+
+
+State 16
+
+   12 problem: '(' KEY_DEFINE '(' KEY_PROBLEM NAME ')' '(' . KEY_DOMAIN NAME ')' problem_defs ')'
+
+    KEY_DOMAIN  shift, and go to state 26
+
+
+State 17
+
+   43 require_def: '(' . KEY_REQUIREMENTS require_defs ')'
+   46 type_def: '(' . KEY_TYPES type_def_list ')'
+   50 const_def: '(' . KEY_CONSTANTS constant_declaration_list ')'
+   57 predicates_def: '(' . KEY_PREDICATES atomic_predicate_def-list ')'
+   61 functions_def: '(' . KEY_FUNCTIONS typed_atomic_function_def-list ')'
+   69 task_def: '(' . task_or_action NAME parameters-option precondition_option effect_option ')'
+   74 method_def: '(' . KEY_METHOD NAME parameters-option KEY_TASK '(' NAME var_or_const-list ')' precondition_option effect_option tasknetwork_def ')'
+
+    KEY_TYPES         shift, and go to state 27
+    KEY_REQUIREMENTS  shift, and go to state 28
+    KEY_PREDICATES    shift, and go to state 29
+    KEY_FUNCTIONS     shift, and go to state 30
+    KEY_TASK          shift, and go to state 31
+    KEY_CONSTANTS     shift, and go to state 32
+    KEY_ACTION        shift, and go to state 33
+    KEY_METHOD        shift, and go to state 34
+
+    task_or_action  go to state 35
+
+
+State 18
+
+    3 domain: '(' KEY_DEFINE '(' KEY_DOMAIN domain_symbol ')' domain_defs ')' .
+
+    $default  reduce using rule 3 (domain)
+
+
+State 19
+
+    4 domain_defs: domain_defs require_def .
+
+    $default  reduce using rule 4 (domain_defs)
+
+
+State 20
+
+    5 domain_defs: domain_defs type_def .
+
+    $default  reduce using rule 5 (domain_defs)
+
+
+State 21
+
+    6 domain_defs: domain_defs const_def .
+
+    $default  reduce using rule 6 (domain_defs)
+
+
+State 22
+
+    7 domain_defs: domain_defs predicates_def .
+
+    $default  reduce using rule 7 (domain_defs)
+
+
+State 23
+
+    8 domain_defs: domain_defs functions_def .
+
+    $default  reduce using rule 8 (domain_defs)
+
+
+State 24
+
+    9 domain_defs: domain_defs task_def .
+
+    $default  reduce using rule 9 (domain_defs)
+
+
+State 25
+
+   10 domain_defs: domain_defs method_def .
+
+    $default  reduce using rule 10 (domain_defs)
+
+
+State 26
+
+   12 problem: '(' KEY_DEFINE '(' KEY_PROBLEM NAME ')' '(' KEY_DOMAIN . NAME ')' problem_defs ')'
+
+    NAME  shift, and go to state 36
+
+
+State 27
+
+   46 type_def: '(' KEY_TYPES . type_def_list ')'
+
+    NAME  shift, and go to state 37
+
+    $default  reduce using rule 47 (type_def_list)
+
+    type_def_list        go to state 38
+    NAME-list-non-empty  go to state 39
+
+
+State 28
+
+   43 require_def: '(' KEY_REQUIREMENTS . require_defs ')'
+
+    $default  reduce using rule 45 (require_defs)
+
+    require_defs  go to state 40
+
+
+State 29
+
+   57 predicates_def: '(' KEY_PREDICATES . atomic_predicate_def-list ')'
+
+    $default  reduce using rule 59 (atomic_predicate_def-list)
+
+    atomic_predicate_def-list  go to state 41
+
+
+State 30
+
+   61 functions_def: '(' KEY_FUNCTIONS . typed_atomic_function_def-list ')'
+
+    $default  reduce using rule 66 (atomic_function_def-list)
+
+    typed_atomic_function_def-list  go to state 42
+    atomic_function_def-list        go to state 43
+
+
+State 31
+
+   67 task_or_action: KEY_TASK .
+
+    $default  reduce using rule 67 (task_or_action)
+
+
+State 32
+
+   50 const_def: '(' KEY_CONSTANTS . constant_declaration_list ')'
+
+    NAME  shift, and go to state 37
+
+    $default  reduce using rule 51 (constant_declaration_list)
+
+    constant_declaration_list  go to state 44
+    NAME-list-non-empty        go to state 45
+
+
+State 33
+
+   68 task_or_action: KEY_ACTION .
+
+    $default  reduce using rule 68 (task_or_action)
+
+
+State 34
+
+   74 method_def: '(' KEY_METHOD . NAME parameters-option KEY_TASK '(' NAME var_or_const-list ')' precondition_option effect_option tasknetwork_def ')'
+
+    NAME  shift, and go to state 46
+
+
+State 35
+
+   69 task_def: '(' task_or_action . NAME parameters-option precondition_option effect_option ')'
+
+    NAME  shift, and go to state 47
+
+
+State 36
+
+   12 problem: '(' KEY_DEFINE '(' KEY_PROBLEM NAME ')' '(' KEY_DOMAIN NAME . ')' problem_defs ')'
+
+    ')'  shift, and go to state 48
+
+
+State 37
+
+  159 NAME-list-non-empty: NAME . NAME-list
+
+    $default  reduce using rule 161 (NAME-list)
+
+    NAME-list  go to state 49
+
+
+State 38
+
+   46 type_def: '(' KEY_TYPES type_def_list . ')'
+
+    ')'  shift, and go to state 50
+
+
+State 39
+
+   48 type_def_list: NAME-list-non-empty .
+   49              | NAME-list-non-empty . '-' NAME type_def_list
+
+    '-'  shift, and go to state 51
+
+    $default  reduce using rule 48 (type_def_list)
+
+
+State 40
+
+   43 require_def: '(' KEY_REQUIREMENTS require_defs . ')'
+   44 require_defs: require_defs . REQUIRE_NAME
+
+    REQUIRE_NAME  shift, and go to state 52
+    ')'           shift, and go to state 53
+
+
+State 41
+
+   57 predicates_def: '(' KEY_PREDICATES atomic_predicate_def-list . ')'
+   58 atomic_predicate_def-list: atomic_predicate_def-list . atomic_predicate_def
+
+    '('  shift, and go to state 54
+    ')'  shift, and go to state 55
+
+    atomic_predicate_def  go to state 56
+
+
+State 42
+
+   61 functions_def: '(' KEY_FUNCTIONS typed_atomic_function_def-list . ')'
+
+    ')'  shift, and go to state 57
+
+
+State 43
+
+   62 typed_atomic_function_def-list: atomic_function_def-list . typed_function_list_continuation
+   65 atomic_function_def-list: atomic_function_def-list . atomic_predicate_def
+
+    '('  shift, and go to state 54
+    '-'  shift, and go to state 58
+
+    $default  reduce using rule 64 (typed_function_list_continuation)
+
+    atomic_predicate_def              go to state 59
+    typed_function_list_continuation  go to state 60
+
+
+State 44
+
+   50 const_def: '(' KEY_CONSTANTS constant_declaration_list . ')'
+
+    ')'  shift, and go to state 61
+
+
+State 45
+
+   52 constant_declaration_list: NAME-list-non-empty .
+   53                          | NAME-list-non-empty . '-' NAME constant_declaration_list_with_type
+
+    '-'  shift, and go to state 62
+
+    $default  reduce using rule 52 (constant_declaration_list)
+
+
+State 46
+
+   74 method_def: '(' KEY_METHOD NAME . parameters-option KEY_TASK '(' NAME var_or_const-list ')' precondition_option effect_option tasknetwork_def ')'
+
+    KEY_PARAMETERS  shift, and go to state 63
+
+    $default  reduce using rule 32 (parameters-option)
+
+    parameters-option  go to state 64
+
+
+State 47
+
+   69 task_def: '(' task_or_action NAME . parameters-option precondition_option effect_option ')'
+
+    KEY_PARAMETERS  shift, and go to state 63
+
+    $default  reduce using rule 32 (parameters-option)
+
+    parameters-option  go to state 65
+
+
+State 48
+
+   12 problem: '(' KEY_DEFINE '(' KEY_PROBLEM NAME ')' '(' KEY_DOMAIN NAME ')' . problem_defs ')'
+
+    $default  reduce using rule 22 (problem_defs)
+
+    problem_defs  go to state 66
+
+
+State 49
+
+  159 NAME-list-non-empty: NAME NAME-list .
+  160 NAME-list: NAME-list . NAME
+
+    NAME  shift, and go to state 67
+
+    $default  reduce using rule 159 (NAME-list-non-empty)
+
+
+State 50
+
+   46 type_def: '(' KEY_TYPES type_def_list ')' .
+
+    $default  reduce using rule 46 (type_def)
+
+
+State 51
+
+   49 type_def_list: NAME-list-non-empty '-' . NAME type_def_list
+
+    NAME  shift, and go to state 68
+
+
+State 52
+
+   44 require_defs: require_defs REQUIRE_NAME .
+
+    $default  reduce using rule 44 (require_defs)
+
+
+State 53
+
+   43 require_def: '(' KEY_REQUIREMENTS require_defs ')' .
+
+    $default  reduce using rule 43 (require_def)
+
+
+State 54
+
+   60 atomic_predicate_def: '(' . NAME typed_or_untyped_var_list ')'
+
+    NAME  shift, and go to state 69
+
+
+State 55
+
+   57 predicates_def: '(' KEY_PREDICATES atomic_predicate_def-list ')' .
+
+    $default  reduce using rule 57 (predicates_def)
+
+
+State 56
+
+   58 atomic_predicate_def-list: atomic_predicate_def-list atomic_predicate_def .
+
+    $default  reduce using rule 58 (atomic_predicate_def-list)
+
+
+State 57
+
+   61 functions_def: '(' KEY_FUNCTIONS typed_atomic_function_def-list ')' .
+
+    $default  reduce using rule 61 (functions_def)
+
+
+State 58
+
+   63 typed_function_list_continuation: '-' . NAME typed_atomic_function_def-list
+
+    NAME  shift, and go to state 70
+
+
+State 59
+
+   65 atomic_function_def-list: atomic_function_def-list atomic_predicate_def .
+
+    $default  reduce using rule 65 (atomic_function_def-list)
+
+
+State 60
+
+   62 typed_atomic_function_def-list: atomic_function_def-list typed_function_list_continuation .
+
+    $default  reduce using rule 62 (typed_atomic_function_def-list)
+
+
+State 61
+
+   50 const_def: '(' KEY_CONSTANTS constant_declaration_list ')' .
+
+    $default  reduce using rule 50 (const_def)
+
+
+State 62
+
+   53 constant_declaration_list: NAME-list-non-empty '-' . NAME constant_declaration_list_with_type
+
+    NAME  shift, and go to state 71
+
+
+State 63
+
+   31 parameters-option: KEY_PARAMETERS . '(' typed_or_untyped_var_list ')'
+
+    '('  shift, and go to state 72
+
+
+State 64
+
+   74 method_def: '(' KEY_METHOD NAME parameters-option . KEY_TASK '(' NAME var_or_const-list ')' precondition_option effect_option tasknetwork_def ')'
+
+    KEY_TASK  shift, and go to state 73
+
+
+State 65
+
+   69 task_def: '(' task_or_action NAME parameters-option . precondition_option effect_option ')'
+
+    KEY_PRECONDITION  shift, and go to state 74
+
+    $default  reduce using rule 71 (precondition_option)
+
+    precondition_option  go to state 75
+
+
+State 66
+
+   12 problem: '(' KEY_DEFINE '(' KEY_PROBLEM NAME ')' '(' KEY_DOMAIN NAME ')' problem_defs . ')'
+   13 problem_defs: problem_defs . require_def
+   14             | problem_defs . p_object_declaration
+   15             | problem_defs . p_htn
+   16             | problem_defs . p_init
+   17             | problem_defs . p_goal
+   18             | problem_defs . p_constraint
+   19             | problem_defs . p_metric
+   20             | problem_defs . p_utility
+   21             | problem_defs . p_cost_bound
+
+    '('  shift, and go to state 76
+    ')'  shift, and go to state 77
+
+    p_object_declaration  go to state 78
+    p_init                go to state 79
+    p_goal                go to state 80
+    p_htn                 go to state 81
+    p_constraint          go to state 82
+    p_metric              go to state 83
+    p_utility             go to state 84
+    p_cost_bound          go to state 85
+    require_def           go to state 86
+
+
+State 67
+
+  160 NAME-list: NAME-list NAME .
+
+    $default  reduce using rule 160 (NAME-list)
+
+
+State 68
+
+   49 type_def_list: NAME-list-non-empty '-' NAME . type_def_list
+
+    NAME  shift, and go to state 37
+
+    $default  reduce using rule 47 (type_def_list)
+
+    type_def_list        go to state 87
+    NAME-list-non-empty  go to state 39
+
+
+State 69
+
+   60 atomic_predicate_def: '(' NAME . typed_or_untyped_var_list ')'
+
+    ')'       reduce using rule 167 (typed_or_untyped_var_list)
+    $default  reduce using rule 164 (VAR_NAME-list)
+
+    VAR_NAME-list-non-empty    go to state 88
+    VAR_NAME-list              go to state 89
+    typed_or_untyped_var_list  go to state 90
+
+
+State 70
+
+   63 typed_function_list_continuation: '-' NAME . typed_atomic_function_def-list
+
+    $default  reduce using rule 66 (atomic_function_def-list)
+
+    typed_atomic_function_def-list  go to state 91
+    atomic_function_def-list        go to state 43
+
+
+State 71
+
+   53 constant_declaration_list: NAME-list-non-empty '-' NAME . constant_declaration_list_with_type
+
+    $default  reduce using rule 55 (constant_declaration_list_with_type)
+
+    constant_declaration_list_with_type  go to state 92
+
+
+State 72
+
+   31 parameters-option: KEY_PARAMETERS '(' . typed_or_untyped_var_list ')'
+
+    ')'       reduce using rule 167 (typed_or_untyped_var_list)
+    $default  reduce using rule 164 (VAR_NAME-list)
+
+    VAR_NAME-list-non-empty    go to state 88
+    VAR_NAME-list              go to state 89
+    typed_or_untyped_var_list  go to state 93
+
+
+State 73
+
+   74 method_def: '(' KEY_METHOD NAME parameters-option KEY_TASK . '(' NAME var_or_const-list ')' precondition_option effect_option tasknetwork_def ')'
+
+    '('  shift, and go to state 94
+
+
+State 74
+
+   70 precondition_option: KEY_PRECONDITION . gd
+
+    '('  shift, and go to state 95
+
+    gd                      go to state 96
+    gd_empty                go to state 97
+    gd_conjuction           go to state 98
+    gd_disjuction           go to state 99
+    gd_negation             go to state 100
+    gd_implication          go to state 101
+    gd_existential          go to state 102
+    gd_universal            go to state 103
+    gd_equality_constraint  go to state 104
+    atomic_formula          go to state 105
+
+
+State 75
+
+   69 task_def: '(' task_or_action NAME parameters-option precondition_option . effect_option ')'
+
+    KEY_EFFECT  shift, and go to state 106
+
+    $default  reduce using rule 73 (effect_option)
+
+    effect_option  go to state 107
+
+
+State 76
+
+   23 p_object_declaration: '(' . KEY_OBJECTS constant_declaration_list ')'
+   24 p_init: '(' . KEY_INIT init_el ')'
+   28 p_goal: '(' . KEY_GOAL gd ')'
+   33 p_htn: '(' . htn_type parameters-option tasknetwork_def ')'
+   34 p_constraint: '(' . KEY_CONSTRAINTS gd ')'
+   35 p_metric: '(' . KEY_METRIC KEY_MIMIZE metric_f_exp ')'
+   38 p_utility: '(' . KEY_UTILITY utility_list ')'
+   41 p_cost_bound: '(' . KEY_BOUND INT ')'
+   43 require_def: '(' . KEY_REQUIREMENTS require_defs ')'
+
+    KEY_REQUIREMENTS  shift, and go to state 28
+    KEY_GOAL          shift, and go to state 108
+    KEY_INIT          shift, and go to state 109
+    KEY_OBJECTS       shift, and go to state 110
+    KEY_HTN           shift, and go to state 111
+    KEY_TIHTN         shift, and go to state 112
+    KEY_METRIC        shift, and go to state 113
+    KEY_UTILITY       shift, and go to state 114
+    KEY_BOUND         shift, and go to state 115
+    KEY_CONSTRAINTS   shift, and go to state 116
+
+    htn_type  go to state 117
+
+
+State 77
+
+   12 problem: '(' KEY_DEFINE '(' KEY_PROBLEM NAME ')' '(' KEY_DOMAIN NAME ')' problem_defs ')' .
+
+    $default  reduce using rule 12 (problem)
+
+
+State 78
+
+   14 problem_defs: problem_defs p_object_declaration .
+
+    $default  reduce using rule 14 (problem_defs)
+
+
+State 79
+
+   16 problem_defs: problem_defs p_init .
+
+    $default  reduce using rule 16 (problem_defs)
+
+
+State 80
+
+   17 problem_defs: problem_defs p_goal .
+
+    $default  reduce using rule 17 (problem_defs)
+
+
+State 81
+
+   15 problem_defs: problem_defs p_htn .
+
+    $default  reduce using rule 15 (problem_defs)
+
+
+State 82
+
+   18 problem_defs: problem_defs p_constraint .
+
+    $default  reduce using rule 18 (problem_defs)
+
+
+State 83
+
+   19 problem_defs: problem_defs p_metric .
+
+    $default  reduce using rule 19 (problem_defs)
+
+
+State 84
+
+   20 problem_defs: problem_defs p_utility .
+
+    $default  reduce using rule 20 (problem_defs)
+
+
+State 85
+
+   21 problem_defs: problem_defs p_cost_bound .
+
+    $default  reduce using rule 21 (problem_defs)
+
+
+State 86
+
+   13 problem_defs: problem_defs require_def .
+
+    $default  reduce using rule 13 (problem_defs)
+
+
+State 87
+
+   49 type_def_list: NAME-list-non-empty '-' NAME type_def_list .
+
+    $default  reduce using rule 49 (type_def_list)
+
+
+State 88
+
+  168 typed_or_untyped_var_list: VAR_NAME-list-non-empty .
+  169                          | VAR_NAME-list-non-empty . '-' NAME typed_var_list
+
+    '-'  shift, and go to state 118
+
+    $default  reduce using rule 168 (typed_or_untyped_var_list)
+
+
+State 89
+
+  162 VAR_NAME-list-non-empty: VAR_NAME-list . VAR_NAME
+  163 VAR_NAME-list: VAR_NAME-list . VAR_NAME
+
+    VAR_NAME  shift, and go to state 119
+
+
+State 90
+
+   60 atomic_predicate_def: '(' NAME typed_or_untyped_var_list . ')'
+
+    ')'  shift, and go to state 120
+
+
+State 91
+
+   63 typed_function_list_continuation: '-' NAME typed_atomic_function_def-list .
+
+    $default  reduce using rule 63 (typed_function_list_continuation)
+
+
+State 92
+
+   53 constant_declaration_list: NAME-list-non-empty '-' NAME constant_declaration_list_with_type .
+   54 constant_declaration_list_with_type: constant_declaration_list_with_type . constant_declarations
+
+    NAME  shift, and go to state 37
+
+    $default  reduce using rule 53 (constant_declaration_list)
+
+    constant_declarations  go to state 121
+    NAME-list-non-empty    go to state 122
+
+
+State 93
+
+   31 parameters-option: KEY_PARAMETERS '(' typed_or_untyped_var_list . ')'
+
+    ')'  shift, and go to state 123
+
+
+State 94
+
+   74 method_def: '(' KEY_METHOD NAME parameters-option KEY_TASK '(' . NAME var_or_const-list ')' precondition_option effect_option tasknetwork_def ')'
+
+    NAME  shift, and go to state 124
+
+
+State 95
+
+  124 gd_empty: '(' . ')'
+  125 gd_conjuction: '(' . KEY_AND gd-list ')'
+  126 gd_disjuction: '(' . KEY_OR gd-list ')'
+  127 gd_negation: '(' . KEY_NOT gd ')'
+  128 gd_implication: '(' . KEY_IMPLY gd gd ')'
+  129 gd_existential: '(' . KEY_EXISTS '(' typed_or_untyped_var_list ')' gd ')'
+  130 gd_universal: '(' . KEY_FORALL '(' typed_or_untyped_var_list ')' gd ')'
+  131 gd_equality_constraint: '(' . '=' var_or_const var_or_const ')'
+  137 atomic_formula: '(' . NAME var_or_const-list ')'
+
+    KEY_AND     shift, and go to state 125
+    KEY_OR      shift, and go to state 126
+    KEY_NOT     shift, and go to state 127
+    KEY_IMPLY   shift, and go to state 128
+    KEY_FORALL  shift, and go to state 129
+    KEY_EXISTS  shift, and go to state 130
+    NAME        shift, and go to state 131
+    ')'         shift, and go to state 132
+    '='         shift, and go to state 133
+
+
+State 96
+
+   70 precondition_option: KEY_PRECONDITION gd .
+
+    $default  reduce using rule 70 (precondition_option)
+
+
+State 97
+
+  113 gd: gd_empty .
+
+    $default  reduce using rule 113 (gd)
+
+
+State 98
+
+  117 gd: gd_conjuction .
+
+    $default  reduce using rule 117 (gd)
+
+
+State 99
+
+  118 gd: gd_disjuction .
+
+    $default  reduce using rule 118 (gd)
+
+
+State 100
+
+  115 gd: gd_negation .
+
+    $default  reduce using rule 115 (gd)
+
+
+State 101
+
+  116 gd: gd_implication .
+
+    $default  reduce using rule 116 (gd)
+
+
+State 102
+
+  119 gd: gd_existential .
+
+    $default  reduce using rule 119 (gd)
+
+
+State 103
+
+  120 gd: gd_universal .
+
+    $default  reduce using rule 120 (gd)
+
+
+State 104
+
+  121 gd: gd_equality_constraint .
+
+    $default  reduce using rule 121 (gd)
+
+
+State 105
+
+  114 gd: atomic_formula .
+
+    $default  reduce using rule 114 (gd)
+
+
+State 106
+
+   72 effect_option: KEY_EFFECT . effect
+
+    '('  shift, and go to state 134
+
+    atomic_formula      go to state 135
+    effect              go to state 136
+    eff_empty           go to state 137
+    eff_conjunction     go to state 138
+    eff_universal       go to state 139
+    eff_conditional     go to state 140
+    literal             go to state 141
+    neg_atomic_formula  go to state 142
+    p_effect            go to state 143
+
+
+State 107
+
+   69 task_def: '(' task_or_action NAME parameters-option precondition_option effect_option . ')'
+
+    ')'  shift, and go to state 144
+
+
+State 108
+
+   28 p_goal: '(' KEY_GOAL . gd ')'
+
+    '('  shift, and go to state 95
+
+    gd                      go to state 145
+    gd_empty                go to state 97
+    gd_conjuction           go to state 98
+    gd_disjuction           go to state 99
+    gd_negation             go to state 100
+    gd_implication          go to state 101
+    gd_existential          go to state 102
+    gd_universal            go to state 103
+    gd_equality_constraint  go to state 104
+    atomic_formula          go to state 105
+
+
+State 109
+
+   24 p_init: '(' KEY_INIT . init_el ')'
+
+    $default  reduce using rule 27 (init_el)
+
+    init_el  go to state 146
+
+
+State 110
+
+   23 p_object_declaration: '(' KEY_OBJECTS . constant_declaration_list ')'
+
+    NAME  shift, and go to state 37
+
+    $default  reduce using rule 51 (constant_declaration_list)
+
+    constant_declaration_list  go to state 147
+    NAME-list-non-empty        go to state 45
+
+
+State 111
+
+   29 htn_type: KEY_HTN .
+
+    $default  reduce using rule 29 (htn_type)
+
+
+State 112
+
+   30 htn_type: KEY_TIHTN .
+
+    $default  reduce using rule 30 (htn_type)
+
+
+State 113
+
+   35 p_metric: '(' KEY_METRIC . KEY_MIMIZE metric_f_exp ')'
+
+    KEY_MIMIZE  shift, and go to state 148
+
+
+State 114
+
+   38 p_utility: '(' KEY_UTILITY . utility_list ')'
+
+    '('  shift, and go to state 149
+
+    $default  reduce using rule 40 (utility_list)
+
+    utility_list  go to state 150
+
+
+State 115
+
+   41 p_cost_bound: '(' KEY_BOUND . INT ')'
+
+    INT  shift, and go to state 151
+
+
+State 116
+
+   34 p_constraint: '(' KEY_CONSTRAINTS . gd ')'
+
+    '('  shift, and go to state 95
+
+    gd                      go to state 152
+    gd_empty                go to state 97
+    gd_conjuction           go to state 98
+    gd_disjuction           go to state 99
+    gd_negation             go to state 100
+    gd_implication          go to state 101
+    gd_existential          go to state 102
+    gd_universal            go to state 103
+    gd_equality_constraint  go to state 104
+    atomic_formula          go to state 105
+
+
+State 117
+
+   33 p_htn: '(' htn_type . parameters-option tasknetwork_def ')'
+
+    KEY_PARAMETERS  shift, and go to state 63
+
+    $default  reduce using rule 32 (parameters-option)
+
+    parameters-option  go to state 153
+
+
+State 118
+
+  169 typed_or_untyped_var_list: VAR_NAME-list-non-empty '-' . NAME typed_var_list
+
+    NAME  shift, and go to state 154
+
+
+State 119
+
+  162 VAR_NAME-list-non-empty: VAR_NAME-list VAR_NAME .
+  163 VAR_NAME-list: VAR_NAME-list VAR_NAME .
+
+    VAR_NAME  reduce using rule 163 (VAR_NAME-list)
+    $default  reduce using rule 162 (VAR_NAME-list-non-empty)
+
+
+State 120
+
+   60 atomic_predicate_def: '(' NAME typed_or_untyped_var_list ')' .
+
+    $default  reduce using rule 60 (atomic_predicate_def)
+
+
+State 121
+
+   54 constant_declaration_list_with_type: constant_declaration_list_with_type constant_declarations .
+
+    $default  reduce using rule 54 (constant_declaration_list_with_type)
+
+
+State 122
+
+   56 constant_declarations: NAME-list-non-empty . '-' NAME
+
+    '-'  shift, and go to state 155
+
+
+State 123
+
+   31 parameters-option: KEY_PARAMETERS '(' typed_or_untyped_var_list ')' .
+
+    $default  reduce using rule 31 (parameters-option)
+
+
+State 124
+
+   74 method_def: '(' KEY_METHOD NAME parameters-option KEY_TASK '(' NAME . var_or_const-list ')' precondition_option effect_option tasknetwork_def ')'
+
+    $default  reduce using rule 134 (var_or_const-list)
+
+    var_or_const-list  go to state 156
+
+
+State 125
+
+  125 gd_conjuction: '(' KEY_AND . gd-list ')'
+
+    $default  reduce using rule 123 (gd-list)
+
+    gd-list  go to state 157
+
+
+State 126
+
+  126 gd_disjuction: '(' KEY_OR . gd-list ')'
+
+    $default  reduce using rule 123 (gd-list)
+
+    gd-list  go to state 158
+
+
+State 127
+
+  127 gd_negation: '(' KEY_NOT . gd ')'
+
+    '('  shift, and go to state 95
+
+    gd                      go to state 159
+    gd_empty                go to state 97
+    gd_conjuction           go to state 98
+    gd_disjuction           go to state 99
+    gd_negation             go to state 100
+    gd_implication          go to state 101
+    gd_existential          go to state 102
+    gd_universal            go to state 103
+    gd_equality_constraint  go to state 104
+    atomic_formula          go to state 105
+
+
+State 128
+
+  128 gd_implication: '(' KEY_IMPLY . gd gd ')'
+
+    '('  shift, and go to state 95
+
+    gd                      go to state 160
+    gd_empty                go to state 97
+    gd_conjuction           go to state 98
+    gd_disjuction           go to state 99
+    gd_negation             go to state 100
+    gd_implication          go to state 101
+    gd_existential          go to state 102
+    gd_universal            go to state 103
+    gd_equality_constraint  go to state 104
+    atomic_formula          go to state 105
+
+
+State 129
+
+  130 gd_universal: '(' KEY_FORALL . '(' typed_or_untyped_var_list ')' gd ')'
+
+    '('  shift, and go to state 161
+
+
+State 130
+
+  129 gd_existential: '(' KEY_EXISTS . '(' typed_or_untyped_var_list ')' gd ')'
+
+    '('  shift, and go to state 162
+
+
+State 131
+
+  137 atomic_formula: '(' NAME . var_or_const-list ')'
+
+    $default  reduce using rule 134 (var_or_const-list)
+
+    var_or_const-list  go to state 163
+
+
+State 132
+
+  124 gd_empty: '(' ')' .
+
+    $default  reduce using rule 124 (gd_empty)
+
+
+State 133
+
+  131 gd_equality_constraint: '(' '=' . var_or_const var_or_const ')'
+
+    NAME      shift, and go to state 164
+    VAR_NAME  shift, and go to state 165
+
+    var_or_const  go to state 166
+
+
+State 134
+
+  137 atomic_formula: '(' . NAME var_or_const-list ')'
+  146 eff_empty: '(' . ')'
+  147 eff_conjunction: '(' . KEY_AND effect-list ')'
+  148 eff_universal: '(' . KEY_FORALL '(' typed_or_untyped_var_list ')' effect ')'
+  149 eff_conditional: '(' . KEY_WHEN gd effect ')'
+  152 neg_atomic_formula: '(' . KEY_NOT atomic_formula ')'
+  153 p_effect: '(' . assign_op f_head f_exp ')'
+
+    KEY_AND       shift, and go to state 167
+    KEY_NOT       shift, and go to state 168
+    KEY_FORALL    shift, and go to state 169
+    KEY_WHEN      shift, and go to state 170
+    KEY_INCREASE  shift, and go to state 171
+    NAME          shift, and go to state 131
+    ')'           shift, and go to state 172
+
+    assign_op  go to state 173
+
+
+State 135
+
+  151 literal: atomic_formula .
+
+    $default  reduce using rule 151 (literal)
+
+
+State 136
+
+   72 effect_option: KEY_EFFECT effect .
+
+    $default  reduce using rule 72 (effect_option)
+
+
+State 137
+
+  140 effect: eff_empty .
+
+    $default  reduce using rule 140 (effect)
+
+
+State 138
+
+  141 effect: eff_conjunction .
+
+    $default  reduce using rule 141 (effect)
+
+
+State 139
+
+  142 effect: eff_universal .
+
+    $default  reduce using rule 142 (effect)
+
+
+State 140
+
+  143 effect: eff_conditional .
+
+    $default  reduce using rule 143 (effect)
+
+
+State 141
+
+  144 effect: literal .
+
+    $default  reduce using rule 144 (effect)
+
+
+State 142
+
+  150 literal: neg_atomic_formula .
+
+    $default  reduce using rule 150 (literal)
+
+
+State 143
+
+  145 effect: p_effect .
+
+    $default  reduce using rule 145 (effect)
+
+
+State 144
+
+   69 task_def: '(' task_or_action NAME parameters-option precondition_option effect_option ')' .
+
+    $default  reduce using rule 69 (task_def)
+
+
+State 145
+
+   28 p_goal: '(' KEY_GOAL gd . ')'
+
+    ')'  shift, and go to state 174
+
+
+State 146
+
+   24 p_init: '(' KEY_INIT init_el . ')'
+   25 init_el: init_el . literal
+   26        | init_el . '(' '=' literal INT ')'
+
+    '('  shift, and go to state 175
+    ')'  shift, and go to state 176
+
+    atomic_formula      go to state 135
+    literal             go to state 177
+    neg_atomic_formula  go to state 142
+
+
+State 147
+
+   23 p_object_declaration: '(' KEY_OBJECTS constant_declaration_list . ')'
+
+    ')'  shift, and go to state 178
+
+
+State 148
+
+   35 p_metric: '(' KEY_METRIC KEY_MIMIZE . metric_f_exp ')'
+
+    NAME  shift, and go to state 179
+    '('   shift, and go to state 180
+
+    metric_f_exp  go to state 181
+
+
+State 149
+
+   39 utility_list: '(' . '=' atomic_formula INT ')' utility_list
+
+    '='  shift, and go to state 182
+
+
+State 150
+
+   38 p_utility: '(' KEY_UTILITY utility_list . ')'
+
+    ')'  shift, and go to state 183
+
+
+State 151
+
+   41 p_cost_bound: '(' KEY_BOUND INT . ')'
+
+    ')'  shift, and go to state 184
+
+
+State 152
+
+   34 p_constraint: '(' KEY_CONSTRAINTS gd . ')'
+
+    ')'  shift, and go to state 185
+
+
+State 153
+
+   33 p_htn: '(' htn_type parameters-option . tasknetwork_def ')'
+
+    KEY_ORDER_TASKS  shift, and go to state 186
+    KEY_TASKS        shift, and go to state 187
+
+    $default  reduce using rule 78 (subtasks_option)
+
+    tasknetwork_def  go to state 188
+    subtasks_option  go to state 189
+
+
+State 154
+
+  169 typed_or_untyped_var_list: VAR_NAME-list-non-empty '-' NAME . typed_var_list
+
+    $default  reduce using rule 171 (typed_var_list)
+
+    typed_var_list  go to state 190
+
+
+State 155
+
+   56 constant_declarations: NAME-list-non-empty '-' . NAME
+
+    NAME  shift, and go to state 191
+
+
+State 156
+
+   74 method_def: '(' KEY_METHOD NAME parameters-option KEY_TASK '(' NAME var_or_const-list . ')' precondition_option effect_option tasknetwork_def ')'
+  132 var_or_const-list: var_or_const-list . NAME
+  133                  | var_or_const-list . VAR_NAME
+
+    NAME      shift, and go to state 192
+    VAR_NAME  shift, and go to state 193
+    ')'       shift, and go to state 194
+
+
+State 157
+
+  122 gd-list: gd-list . gd
+  125 gd_conjuction: '(' KEY_AND gd-list . ')'
+
+    '('  shift, and go to state 95
+    ')'  shift, and go to state 195
+
+    gd                      go to state 196
+    gd_empty                go to state 97
+    gd_conjuction           go to state 98
+    gd_disjuction           go to state 99
+    gd_negation             go to state 100
+    gd_implication          go to state 101
+    gd_existential          go to state 102
+    gd_universal            go to state 103
+    gd_equality_constraint  go to state 104
+    atomic_formula          go to state 105
+
+
+State 158
+
+  122 gd-list: gd-list . gd
+  126 gd_disjuction: '(' KEY_OR gd-list . ')'
+
+    '('  shift, and go to state 95
+    ')'  shift, and go to state 197
+
+    gd                      go to state 196
+    gd_empty                go to state 97
+    gd_conjuction           go to state 98
+    gd_disjuction           go to state 99
+    gd_negation             go to state 100
+    gd_implication          go to state 101
+    gd_existential          go to state 102
+    gd_universal            go to state 103
+    gd_equality_constraint  go to state 104
+    atomic_formula          go to state 105
+
+
+State 159
+
+  127 gd_negation: '(' KEY_NOT gd . ')'
+
+    ')'  shift, and go to state 198
+
+
+State 160
+
+  128 gd_implication: '(' KEY_IMPLY gd . gd ')'
+
+    '('  shift, and go to state 95
+
+    gd                      go to state 199
+    gd_empty                go to state 97
+    gd_conjuction           go to state 98
+    gd_disjuction           go to state 99
+    gd_negation             go to state 100
+    gd_implication          go to state 101
+    gd_existential          go to state 102
+    gd_universal            go to state 103
+    gd_equality_constraint  go to state 104
+    atomic_formula          go to state 105
+
+
+State 161
+
+  130 gd_universal: '(' KEY_FORALL '(' . typed_or_untyped_var_list ')' gd ')'
+
+    ')'       reduce using rule 167 (typed_or_untyped_var_list)
+    $default  reduce using rule 164 (VAR_NAME-list)
+
+    VAR_NAME-list-non-empty    go to state 88
+    VAR_NAME-list              go to state 89
+    typed_or_untyped_var_list  go to state 200
+
+
+State 162
+
+  129 gd_existential: '(' KEY_EXISTS '(' . typed_or_untyped_var_list ')' gd ')'
+
+    ')'       reduce using rule 167 (typed_or_untyped_var_list)
+    $default  reduce using rule 164 (VAR_NAME-list)
+
+    VAR_NAME-list-non-empty    go to state 88
+    VAR_NAME-list              go to state 89
+    typed_or_untyped_var_list  go to state 201
+
+
+State 163
+
+  132 var_or_const-list: var_or_const-list . NAME
+  133                  | var_or_const-list . VAR_NAME
+  137 atomic_formula: '(' NAME var_or_const-list . ')'
+
+    NAME      shift, and go to state 192
+    VAR_NAME  shift, and go to state 193
+    ')'       shift, and go to state 202
+
+
+State 164
+
+  135 var_or_const: NAME .
+
+    $default  reduce using rule 135 (var_or_const)
+
+
+State 165
+
+  136 var_or_const: VAR_NAME .
+
+    $default  reduce using rule 136 (var_or_const)
+
+
+State 166
+
+  131 gd_equality_constraint: '(' '=' var_or_const . var_or_const ')'
+
+    NAME      shift, and go to state 164
+    VAR_NAME  shift, and go to state 165
+
+    var_or_const  go to state 203
+
+
+State 167
+
+  147 eff_conjunction: '(' KEY_AND . effect-list ')'
+
+    $default  reduce using rule 139 (effect-list)
+
+    effect-list  go to state 204
+
+
+State 168
+
+  152 neg_atomic_formula: '(' KEY_NOT . atomic_formula ')'
+
+    '('  shift, and go to state 205
+
+    atomic_formula  go to state 206
+
+
+State 169
+
+  148 eff_universal: '(' KEY_FORALL . '(' typed_or_untyped_var_list ')' effect ')'
+
+    '('  shift, and go to state 207
+
+
+State 170
+
+  149 eff_conditional: '(' KEY_WHEN . gd effect ')'
+
+    '('  shift, and go to state 95
+
+    gd                      go to state 208
+    gd_empty                go to state 97
+    gd_conjuction           go to state 98
+    gd_disjuction           go to state 99
+    gd_negation             go to state 100
+    gd_implication          go to state 101
+    gd_existential          go to state 102
+    gd_universal            go to state 103
+    gd_equality_constraint  go to state 104
+    atomic_formula          go to state 105
+
+
+State 171
+
+  154 assign_op: KEY_INCREASE .
+
+    $default  reduce using rule 154 (assign_op)
+
+
+State 172
+
+  146 eff_empty: '(' ')' .
+
+    $default  reduce using rule 146 (eff_empty)
+
+
+State 173
+
+  153 p_effect: '(' assign_op . f_head f_exp ')'
+
+    NAME  shift, and go to state 209
+    '('   shift, and go to state 210
+
+    f_head  go to state 211
+
+
+State 174
+
+   28 p_goal: '(' KEY_GOAL gd ')' .
+
+    $default  reduce using rule 28 (p_goal)
+
+
+State 175
+
+   26 init_el: init_el '(' . '=' literal INT ')'
+  137 atomic_formula: '(' . NAME var_or_const-list ')'
+  152 neg_atomic_formula: '(' . KEY_NOT atomic_formula ')'
+
+    KEY_NOT  shift, and go to state 168
+    NAME     shift, and go to state 131
+    '='      shift, and go to state 212
+
+
+State 176
+
+   24 p_init: '(' KEY_INIT init_el ')' .
+
+    $default  reduce using rule 24 (p_init)
+
+
+State 177
+
+   25 init_el: init_el literal .
+
+    $default  reduce using rule 25 (init_el)
+
+
+State 178
+
+   23 p_object_declaration: '(' KEY_OBJECTS constant_declaration_list ')' .
+
+    $default  reduce using rule 23 (p_object_declaration)
+
+
+State 179
+
+   36 metric_f_exp: NAME .
+
+    $default  reduce using rule 36 (metric_f_exp)
+
+
+State 180
+
+   37 metric_f_exp: '(' . NAME ')'
+
+    NAME  shift, and go to state 213
+
+
+State 181
+
+   35 p_metric: '(' KEY_METRIC KEY_MIMIZE metric_f_exp . ')'
+
+    ')'  shift, and go to state 214
+
+
+State 182
+
+   39 utility_list: '(' '=' . atomic_formula INT ')' utility_list
+
+    '('  shift, and go to state 205
+
+    atomic_formula  go to state 215
+
+
+State 183
+
+   38 p_utility: '(' KEY_UTILITY utility_list ')' .
+
+    $default  reduce using rule 38 (p_utility)
+
+
+State 184
+
+   41 p_cost_bound: '(' KEY_BOUND INT ')' .
+
+    $default  reduce using rule 41 (p_cost_bound)
+
+
+State 185
+
+   34 p_constraint: '(' KEY_CONSTRAINTS gd ')' .
+
+    $default  reduce using rule 34 (p_constraint)
+
+
+State 186
+
+   77 subtasks_option: KEY_ORDER_TASKS . subtask_defs
+
+    '('  shift, and go to state 216
+
+    subtask_defs  go to state 217
+    subtask_def   go to state 218
+
+
+State 187
+
+   76 subtasks_option: KEY_TASKS . subtask_defs
+
+    '('  shift, and go to state 216
+
+    subtask_defs  go to state 219
+    subtask_def   go to state 218
+
+
+State 188
+
+   33 p_htn: '(' htn_type parameters-option tasknetwork_def . ')'
+
+    ')'  shift, and go to state 220
+
+
+State 189
+
+   75 tasknetwork_def: subtasks_option . ordering_option constraints_option causal_links_option
+
+    KEY_ORDER  shift, and go to state 221
+
+    $default  reduce using rule 80 (ordering_option)
+
+    ordering_option  go to state 222
+
+
+State 190
+
+  169 typed_or_untyped_var_list: VAR_NAME-list-non-empty '-' NAME typed_var_list .
+  170 typed_var_list: typed_var_list . typed_vars
+
+    ')'       reduce using rule 169 (typed_or_untyped_var_list)
+    $default  reduce using rule 164 (VAR_NAME-list)
+
+    VAR_NAME-list-non-empty  go to state 223
+    VAR_NAME-list            go to state 89
+    typed_vars               go to state 224
+
+
+State 191
+
+   56 constant_declarations: NAME-list-non-empty '-' NAME .
+
+    $default  reduce using rule 56 (constant_declarations)
+
+
+State 192
+
+  132 var_or_const-list: var_or_const-list NAME .
+
+    $default  reduce using rule 132 (var_or_const-list)
+
+
+State 193
+
+  133 var_or_const-list: var_or_const-list VAR_NAME .
+
+    $default  reduce using rule 133 (var_or_const-list)
+
+
+State 194
+
+   74 method_def: '(' KEY_METHOD NAME parameters-option KEY_TASK '(' NAME var_or_const-list ')' . precondition_option effect_option tasknetwork_def ')'
+
+    KEY_PRECONDITION  shift, and go to state 74
+
+    $default  reduce using rule 71 (precondition_option)
+
+    precondition_option  go to state 225
+
+
+State 195
+
+  125 gd_conjuction: '(' KEY_AND gd-list ')' .
+
+    $default  reduce using rule 125 (gd_conjuction)
+
+
+State 196
+
+  122 gd-list: gd-list gd .
+
+    $default  reduce using rule 122 (gd-list)
+
+
+State 197
+
+  126 gd_disjuction: '(' KEY_OR gd-list ')' .
+
+    $default  reduce using rule 126 (gd_disjuction)
+
+
+State 198
+
+  127 gd_negation: '(' KEY_NOT gd ')' .
+
+    $default  reduce using rule 127 (gd_negation)
+
+
+State 199
+
+  128 gd_implication: '(' KEY_IMPLY gd gd . ')'
+
+    ')'  shift, and go to state 226
+
+
+State 200
+
+  130 gd_universal: '(' KEY_FORALL '(' typed_or_untyped_var_list . ')' gd ')'
+
+    ')'  shift, and go to state 227
+
+
+State 201
+
+  129 gd_existential: '(' KEY_EXISTS '(' typed_or_untyped_var_list . ')' gd ')'
+
+    ')'  shift, and go to state 228
+
+
+State 202
+
+  137 atomic_formula: '(' NAME var_or_const-list ')' .
+
+    $default  reduce using rule 137 (atomic_formula)
+
+
+State 203
+
+  131 gd_equality_constraint: '(' '=' var_or_const var_or_const . ')'
+
+    ')'  shift, and go to state 229
+
+
+State 204
+
+  138 effect-list: effect-list . effect
+  147 eff_conjunction: '(' KEY_AND effect-list . ')'
+
+    '('  shift, and go to state 134
+    ')'  shift, and go to state 230
+
+    atomic_formula      go to state 135
+    effect              go to state 231
+    eff_empty           go to state 137
+    eff_conjunction     go to state 138
+    eff_universal       go to state 139
+    eff_conditional     go to state 140
+    literal             go to state 141
+    neg_atomic_formula  go to state 142
+    p_effect            go to state 143
+
+
+State 205
+
+  137 atomic_formula: '(' . NAME var_or_const-list ')'
+
+    NAME  shift, and go to state 131
+
+
+State 206
+
+  152 neg_atomic_formula: '(' KEY_NOT atomic_formula . ')'
+
+    ')'  shift, and go to state 232
+
+
+State 207
+
+  148 eff_universal: '(' KEY_FORALL '(' . typed_or_untyped_var_list ')' effect ')'
+
+    ')'       reduce using rule 167 (typed_or_untyped_var_list)
+    $default  reduce using rule 164 (VAR_NAME-list)
+
+    VAR_NAME-list-non-empty    go to state 88
+    VAR_NAME-list              go to state 89
+    typed_or_untyped_var_list  go to state 233
+
+
+State 208
+
+  149 eff_conditional: '(' KEY_WHEN gd . effect ')'
+
+    '('  shift, and go to state 134
+
+    atomic_formula      go to state 135
+    effect              go to state 234
+    eff_empty           go to state 137
+    eff_conjunction     go to state 138
+    eff_universal       go to state 139
+    eff_conditional     go to state 140
+    literal             go to state 141
+    neg_atomic_formula  go to state 142
+    p_effect            go to state 143
+
+
+State 209
+
+  155 f_head: NAME .
+
+    $default  reduce using rule 155 (f_head)
+
+
+State 210
+
+  156 f_head: '(' . NAME var_or_const-list ')'
+
+    NAME  shift, and go to state 235
+
+
+State 211
+
+  153 p_effect: '(' assign_op f_head . f_exp ')'
+
+    NAME  shift, and go to state 209
+    INT   shift, and go to state 236
+    '('   shift, and go to state 210
+
+    f_head  go to state 237
+    f_exp   go to state 238
+
+
+State 212
+
+   26 init_el: init_el '(' '=' . literal INT ')'
+
+    '('  shift, and go to state 239
+
+    atomic_formula      go to state 135
+    literal             go to state 240
+    neg_atomic_formula  go to state 142
+
+
+State 213
+
+   37 metric_f_exp: '(' NAME . ')'
+
+    ')'  shift, and go to state 241
+
+
+State 214
+
+   35 p_metric: '(' KEY_METRIC KEY_MIMIZE metric_f_exp ')' .
+
+    $default  reduce using rule 35 (p_metric)
+
+
+State 215
+
+   39 utility_list: '(' '=' atomic_formula . INT ')' utility_list
+
+    INT  shift, and go to state 242
+
+
+State 216
+
+   85 subtask_defs: '(' . ')'
+   87             | '(' . KEY_AND subtask_def-list ')'
+   90 subtask_def: '(' . NAME var_or_const-list ')'
+   91            | '(' . NAME '(' NAME var_or_const-list ')' ')'
+
+    KEY_AND  shift, and go to state 243
+    NAME     shift, and go to state 244
+    ')'      shift, and go to state 245
+
+
+State 217
+
+   77 subtasks_option: KEY_ORDER_TASKS subtask_defs .
+
+    $default  reduce using rule 77 (subtasks_option)
+
+
+State 218
+
+   86 subtask_defs: subtask_def .
+
+    $default  reduce using rule 86 (subtask_defs)
+
+
+State 219
+
+   76 subtasks_option: KEY_TASKS subtask_defs .
+
+    $default  reduce using rule 76 (subtasks_option)
+
+
+State 220
+
+   33 p_htn: '(' htn_type parameters-option tasknetwork_def ')' .
+
+    $default  reduce using rule 33 (p_htn)
+
+
+State 221
+
+   79 ordering_option: KEY_ORDER . ordering_defs
+
+    '('  shift, and go to state 246
+
+    ordering_defs  go to state 247
+    ordering_def   go to state 248
+
+
+State 222
+
+   75 tasknetwork_def: subtasks_option ordering_option . constraints_option causal_links_option
+
+    KEY_CONSTRAINTS  shift, and go to state 249
+
+    $default  reduce using rule 82 (constraints_option)
+
+    constraints_option  go to state 250
+
+
+State 223
+
+  165 typed_vars: VAR_NAME-list-non-empty . '-' NAME
+
+    '-'  shift, and go to state 251
+
+
+State 224
+
+  170 typed_var_list: typed_var_list typed_vars .
+
+    $default  reduce using rule 170 (typed_var_list)
+
+
+State 225
+
+   74 method_def: '(' KEY_METHOD NAME parameters-option KEY_TASK '(' NAME var_or_const-list ')' precondition_option . effect_option tasknetwork_def ')'
+
+    KEY_EFFECT  shift, and go to state 106
+
+    $default  reduce using rule 73 (effect_option)
+
+    effect_option  go to state 252
+
+
+State 226
+
+  128 gd_implication: '(' KEY_IMPLY gd gd ')' .
+
+    $default  reduce using rule 128 (gd_implication)
+
+
+State 227
+
+  130 gd_universal: '(' KEY_FORALL '(' typed_or_untyped_var_list ')' . gd ')'
+
+    '('  shift, and go to state 95
+
+    gd                      go to state 253
+    gd_empty                go to state 97
+    gd_conjuction           go to state 98
+    gd_disjuction           go to state 99
+    gd_negation             go to state 100
+    gd_implication          go to state 101
+    gd_existential          go to state 102
+    gd_universal            go to state 103
+    gd_equality_constraint  go to state 104
+    atomic_formula          go to state 105
+
+
+State 228
+
+  129 gd_existential: '(' KEY_EXISTS '(' typed_or_untyped_var_list ')' . gd ')'
+
+    '('  shift, and go to state 95
+
+    gd                      go to state 254
+    gd_empty                go to state 97
+    gd_conjuction           go to state 98
+    gd_disjuction           go to state 99
+    gd_negation             go to state 100
+    gd_implication          go to state 101
+    gd_existential          go to state 102
+    gd_universal            go to state 103
+    gd_equality_constraint  go to state 104
+    atomic_formula          go to state 105
+
+
+State 229
+
+  131 gd_equality_constraint: '(' '=' var_or_const var_or_const ')' .
+
+    $default  reduce using rule 131 (gd_equality_constraint)
+
+
+State 230
+
+  147 eff_conjunction: '(' KEY_AND effect-list ')' .
+
+    $default  reduce using rule 147 (eff_conjunction)
+
+
+State 231
+
+  138 effect-list: effect-list effect .
+
+    $default  reduce using rule 138 (effect-list)
+
+
+State 232
+
+  152 neg_atomic_formula: '(' KEY_NOT atomic_formula ')' .
+
+    $default  reduce using rule 152 (neg_atomic_formula)
+
+
+State 233
+
+  148 eff_universal: '(' KEY_FORALL '(' typed_or_untyped_var_list . ')' effect ')'
+
+    ')'  shift, and go to state 255
+
+
+State 234
+
+  149 eff_conditional: '(' KEY_WHEN gd effect . ')'
+
+    ')'  shift, and go to state 256
+
+
+State 235
+
+  156 f_head: '(' NAME . var_or_const-list ')'
+
+    $default  reduce using rule 134 (var_or_const-list)
+
+    var_or_const-list  go to state 257
+
+
+State 236
+
+  157 f_exp: INT .
+
+    $default  reduce using rule 157 (f_exp)
+
+
+State 237
+
+  158 f_exp: f_head .
+
+    $default  reduce using rule 158 (f_exp)
+
+
+State 238
+
+  153 p_effect: '(' assign_op f_head f_exp . ')'
+
+    ')'  shift, and go to state 258
+
+
+State 239
+
+  137 atomic_formula: '(' . NAME var_or_const-list ')'
+  152 neg_atomic_formula: '(' . KEY_NOT atomic_formula ')'
+
+    KEY_NOT  shift, and go to state 168
+    NAME     shift, and go to state 131
+
+
+State 240
+
+   26 init_el: init_el '(' '=' literal . INT ')'
+
+    INT  shift, and go to state 259
+
+
+State 241
+
+   37 metric_f_exp: '(' NAME ')' .
+
+    $default  reduce using rule 37 (metric_f_exp)
+
+
+State 242
+
+   39 utility_list: '(' '=' atomic_formula INT . ')' utility_list
+
+    ')'  shift, and go to state 260
+
+
+State 243
+
+   87 subtask_defs: '(' KEY_AND . subtask_def-list ')'
+
+    $default  reduce using rule 89 (subtask_def-list)
+
+    subtask_def-list  go to state 261
+
+
+State 244
+
+   90 subtask_def: '(' NAME . var_or_const-list ')'
+   91            | '(' NAME . '(' NAME var_or_const-list ')' ')'
+
+    '('  shift, and go to state 262
+
+    $default  reduce using rule 134 (var_or_const-list)
+
+    var_or_const-list  go to state 263
+
+
+State 245
+
+   85 subtask_defs: '(' ')' .
+
+    $default  reduce using rule 85 (subtask_defs)
+
+
+State 246
+
+   92 ordering_defs: '(' . ')'
+   94              | '(' . KEY_AND ordering_def-list ')'
+   97 ordering_def: '(' . NAME '<' NAME ')'
+   98             | '(' . '<' NAME NAME ')'
+
+    KEY_AND  shift, and go to state 264
+    NAME     shift, and go to state 265
+    ')'      shift, and go to state 266
+    '<'      shift, and go to state 267
+
+
+State 247
+
+   79 ordering_option: KEY_ORDER ordering_defs .
+
+    $default  reduce using rule 79 (ordering_option)
+
+
+State 248
+
+   93 ordering_defs: ordering_def .
+
+    $default  reduce using rule 93 (ordering_defs)
+
+
+State 249
+
+   81 constraints_option: KEY_CONSTRAINTS . constraint_def
+
+    '('  shift, and go to state 268
+
+    constraint_def  go to state 269
+
+
+State 250
+
+   75 tasknetwork_def: subtasks_option ordering_option constraints_option . causal_links_option
+
+    KEY_CAUSAL_LINKS  shift, and go to state 270
+
+    $default  reduce using rule 84 (causal_links_option)
+
+    causal_links_option  go to state 271
+
+
+State 251
+
+  165 typed_vars: VAR_NAME-list-non-empty '-' . NAME
+
+    NAME  shift, and go to state 272
+
+
+State 252
+
+   74 method_def: '(' KEY_METHOD NAME parameters-option KEY_TASK '(' NAME var_or_const-list ')' precondition_option effect_option . tasknetwork_def ')'
+
+    KEY_ORDER_TASKS  shift, and go to state 186
+    KEY_TASKS        shift, and go to state 187
+
+    $default  reduce using rule 78 (subtasks_option)
+
+    tasknetwork_def  go to state 273
+    subtasks_option  go to state 189
+
+
+State 253
+
+  130 gd_universal: '(' KEY_FORALL '(' typed_or_untyped_var_list ')' gd . ')'
+
+    ')'  shift, and go to state 274
+
+
+State 254
+
+  129 gd_existential: '(' KEY_EXISTS '(' typed_or_untyped_var_list ')' gd . ')'
+
+    ')'  shift, and go to state 275
+
+
+State 255
+
+  148 eff_universal: '(' KEY_FORALL '(' typed_or_untyped_var_list ')' . effect ')'
+
+    '('  shift, and go to state 134
+
+    atomic_formula      go to state 135
+    effect              go to state 276
+    eff_empty           go to state 137
+    eff_conjunction     go to state 138
+    eff_universal       go to state 139
+    eff_conditional     go to state 140
+    literal             go to state 141
+    neg_atomic_formula  go to state 142
+    p_effect            go to state 143
+
+
+State 256
+
+  149 eff_conditional: '(' KEY_WHEN gd effect ')' .
+
+    $default  reduce using rule 149 (eff_conditional)
+
+
+State 257
+
+  132 var_or_const-list: var_or_const-list . NAME
+  133                  | var_or_const-list . VAR_NAME
+  156 f_head: '(' NAME var_or_const-list . ')'
+
+    NAME      shift, and go to state 192
+    VAR_NAME  shift, and go to state 193
+    ')'       shift, and go to state 277
+
+
+State 258
+
+  153 p_effect: '(' assign_op f_head f_exp ')' .
+
+    $default  reduce using rule 153 (p_effect)
+
+
+State 259
+
+   26 init_el: init_el '(' '=' literal INT . ')'
+
+    ')'  shift, and go to state 278
+
+
+State 260
+
+   39 utility_list: '(' '=' atomic_formula INT ')' . utility_list
+
+    '('  shift, and go to state 149
+
+    $default  reduce using rule 40 (utility_list)
+
+    utility_list  go to state 279
+
+
+State 261
+
+   87 subtask_defs: '(' KEY_AND subtask_def-list . ')'
+   88 subtask_def-list: subtask_def-list . subtask_def
+
+    '('  shift, and go to state 280
+    ')'  shift, and go to state 281
+
+    subtask_def  go to state 282
+
+
+State 262
+
+   91 subtask_def: '(' NAME '(' . NAME var_or_const-list ')' ')'
+
+    NAME  shift, and go to state 283
+
+
+State 263
+
+   90 subtask_def: '(' NAME var_or_const-list . ')'
+  132 var_or_const-list: var_or_const-list . NAME
+  133                  | var_or_const-list . VAR_NAME
+
+    NAME      shift, and go to state 192
+    VAR_NAME  shift, and go to state 193
+    ')'       shift, and go to state 284
+
+
+State 264
+
+   94 ordering_defs: '(' KEY_AND . ordering_def-list ')'
+
+    $default  reduce using rule 96 (ordering_def-list)
+
+    ordering_def-list  go to state 285
+
+
+State 265
+
+   97 ordering_def: '(' NAME . '<' NAME ')'
+
+    '<'  shift, and go to state 286
+
+
+State 266
+
+   92 ordering_defs: '(' ')' .
+
+    $default  reduce using rule 92 (ordering_defs)
+
+
+State 267
+
+   98 ordering_def: '(' '<' . NAME NAME ')'
+
+    NAME  shift, and go to state 287
+
+
+State 268
+
+  101 constraint_def: '(' . ')'
+  102               | '(' . KEY_AND constraint_def-list ')'
+  103               | '(' . '=' var_or_const var_or_const ')'
+  104               | '(' . KEY_NOT '(' '=' var_or_const var_or_const ')' ')'
+  105               | '(' . KEY_TYPEOF typed_var ')'
+  106               | '(' . KEY_NOT '(' KEY_TYPEOF typed_var ')' ')'
+
+    KEY_AND     shift, and go to state 288
+    KEY_NOT     shift, and go to state 289
+    KEY_TYPEOF  shift, and go to state 290
+    ')'         shift, and go to state 291
+    '='         shift, and go to state 292
+
+
+State 269
+
+   81 constraints_option: KEY_CONSTRAINTS constraint_def .
+
+    $default  reduce using rule 81 (constraints_option)
+
+
+State 270
+
+   83 causal_links_option: KEY_CAUSAL_LINKS . causallink_defs
+
+    '('  shift, and go to state 293
+
+    causallink_defs  go to state 294
+    causallink_def   go to state 295
+
+
+State 271
+
+   75 tasknetwork_def: subtasks_option ordering_option constraints_option causal_links_option .
+
+    $default  reduce using rule 75 (tasknetwork_def)
+
+
+State 272
+
+  165 typed_vars: VAR_NAME-list-non-empty '-' NAME .
+
+    $default  reduce using rule 165 (typed_vars)
+
+
+State 273
+
+   74 method_def: '(' KEY_METHOD NAME parameters-option KEY_TASK '(' NAME var_or_const-list ')' precondition_option effect_option tasknetwork_def . ')'
+
+    ')'  shift, and go to state 296
+
+
+State 274
+
+  130 gd_universal: '(' KEY_FORALL '(' typed_or_untyped_var_list ')' gd ')' .
+
+    $default  reduce using rule 130 (gd_universal)
+
+
+State 275
+
+  129 gd_existential: '(' KEY_EXISTS '(' typed_or_untyped_var_list ')' gd ')' .
+
+    $default  reduce using rule 129 (gd_existential)
+
+
+State 276
+
+  148 eff_universal: '(' KEY_FORALL '(' typed_or_untyped_var_list ')' effect . ')'
+
+    ')'  shift, and go to state 297
+
+
+State 277
+
+  156 f_head: '(' NAME var_or_const-list ')' .
+
+    $default  reduce using rule 156 (f_head)
+
+
+State 278
+
+   26 init_el: init_el '(' '=' literal INT ')' .
+
+    $default  reduce using rule 26 (init_el)
+
+
+State 279
+
+   39 utility_list: '(' '=' atomic_formula INT ')' utility_list .
+
+    $default  reduce using rule 39 (utility_list)
+
+
+State 280
+
+   90 subtask_def: '(' . NAME var_or_const-list ')'
+   91            | '(' . NAME '(' NAME var_or_const-list ')' ')'
+
+    NAME  shift, and go to state 244
+
+
+State 281
+
+   87 subtask_defs: '(' KEY_AND subtask_def-list ')' .
+
+    $default  reduce using rule 87 (subtask_defs)
+
+
+State 282
+
+   88 subtask_def-list: subtask_def-list subtask_def .
+
+    $default  reduce using rule 88 (subtask_def-list)
+
+
+State 283
+
+   91 subtask_def: '(' NAME '(' NAME . var_or_const-list ')' ')'
+
+    $default  reduce using rule 134 (var_or_const-list)
+
+    var_or_const-list  go to state 298
+
+
+State 284
+
+   90 subtask_def: '(' NAME var_or_const-list ')' .
+
+    $default  reduce using rule 90 (subtask_def)
+
+
+State 285
+
+   94 ordering_defs: '(' KEY_AND ordering_def-list . ')'
+   95 ordering_def-list: ordering_def-list . ordering_def
+
+    '('  shift, and go to state 299
+    ')'  shift, and go to state 300
+
+    ordering_def  go to state 301
+
+
+State 286
+
+   97 ordering_def: '(' NAME '<' . NAME ')'
+
+    NAME  shift, and go to state 302
+
+
+State 287
+
+   98 ordering_def: '(' '<' NAME . NAME ')'
+
+    NAME  shift, and go to state 303
+
+
+State 288
+
+  102 constraint_def: '(' KEY_AND . constraint_def-list ')'
+
+    $default  reduce using rule 100 (constraint_def-list)
+
+    constraint_def-list  go to state 304
+
+
+State 289
+
+  104 constraint_def: '(' KEY_NOT . '(' '=' var_or_const var_or_const ')' ')'
+  106               | '(' KEY_NOT . '(' KEY_TYPEOF typed_var ')' ')'
+
+    '('  shift, and go to state 305
+
+
+State 290
+
+  105 constraint_def: '(' KEY_TYPEOF . typed_var ')'
+
+    VAR_NAME  shift, and go to state 306
+
+    typed_var  go to state 307
+
+
+State 291
+
+  101 constraint_def: '(' ')' .
+
+    $default  reduce using rule 101 (constraint_def)
+
+
+State 292
+
+  103 constraint_def: '(' '=' . var_or_const var_or_const ')'
+
+    NAME      shift, and go to state 164
+    VAR_NAME  shift, and go to state 165
+
+    var_or_const  go to state 308
+
+
+State 293
+
+  107 causallink_defs: '(' . ')'
+  109                | '(' . KEY_AND causallink_def-list ')'
+  112 causallink_def: '(' . NAME literal NAME ')'
+
+    KEY_AND  shift, and go to state 309
+    NAME     shift, and go to state 310
+    ')'      shift, and go to state 311
+
+
+State 294
+
+   83 causal_links_option: KEY_CAUSAL_LINKS causallink_defs .
+
+    $default  reduce using rule 83 (causal_links_option)
+
+
+State 295
+
+  108 causallink_defs: causallink_def .
+
+    $default  reduce using rule 108 (causallink_defs)
+
+
+State 296
+
+   74 method_def: '(' KEY_METHOD NAME parameters-option KEY_TASK '(' NAME var_or_const-list ')' precondition_option effect_option tasknetwork_def ')' .
+
+    $default  reduce using rule 74 (method_def)
+
+
+State 297
+
+  148 eff_universal: '(' KEY_FORALL '(' typed_or_untyped_var_list ')' effect ')' .
+
+    $default  reduce using rule 148 (eff_universal)
+
+
+State 298
+
+   91 subtask_def: '(' NAME '(' NAME var_or_const-list . ')' ')'
+  132 var_or_const-list: var_or_const-list . NAME
+  133                  | var_or_const-list . VAR_NAME
+
+    NAME      shift, and go to state 192
+    VAR_NAME  shift, and go to state 193
+    ')'       shift, and go to state 312
+
+
+State 299
+
+   97 ordering_def: '(' . NAME '<' NAME ')'
+   98             | '(' . '<' NAME NAME ')'
+
+    NAME  shift, and go to state 265
+    '<'   shift, and go to state 267
+
+
+State 300
+
+   94 ordering_defs: '(' KEY_AND ordering_def-list ')' .
+
+    $default  reduce using rule 94 (ordering_defs)
+
+
+State 301
+
+   95 ordering_def-list: ordering_def-list ordering_def .
+
+    $default  reduce using rule 95 (ordering_def-list)
+
+
+State 302
+
+   97 ordering_def: '(' NAME '<' NAME . ')'
+
+    ')'  shift, and go to state 313
+
+
+State 303
+
+   98 ordering_def: '(' '<' NAME NAME . ')'
+
+    ')'  shift, and go to state 314
+
+
+State 304
+
+   99 constraint_def-list: constraint_def-list . constraint_def
+  102 constraint_def: '(' KEY_AND constraint_def-list . ')'
+
+    '('  shift, and go to state 268
+    ')'  shift, and go to state 315
+
+    constraint_def  go to state 316
+
+
+State 305
+
+  104 constraint_def: '(' KEY_NOT '(' . '=' var_or_const var_or_const ')' ')'
+  106               | '(' KEY_NOT '(' . KEY_TYPEOF typed_var ')' ')'
+
+    KEY_TYPEOF  shift, and go to state 317
+    '='         shift, and go to state 318
+
+
+State 306
+
+  166 typed_var: VAR_NAME . '-' NAME
+
+    '-'  shift, and go to state 319
+
+
+State 307
+
+  105 constraint_def: '(' KEY_TYPEOF typed_var . ')'
+
+    ')'  shift, and go to state 320
+
+
+State 308
+
+  103 constraint_def: '(' '=' var_or_const . var_or_const ')'
+
+    NAME      shift, and go to state 164
+    VAR_NAME  shift, and go to state 165
+
+    var_or_const  go to state 321
+
+
+State 309
+
+  109 causallink_defs: '(' KEY_AND . causallink_def-list ')'
+
+    $default  reduce using rule 111 (causallink_def-list)
+
+    causallink_def-list  go to state 322
+
+
+State 310
+
+  112 causallink_def: '(' NAME . literal NAME ')'
+
+    '('  shift, and go to state 239
+
+    atomic_formula      go to state 135
+    literal             go to state 323
+    neg_atomic_formula  go to state 142
+
+
+State 311
+
+  107 causallink_defs: '(' ')' .
+
+    $default  reduce using rule 107 (causallink_defs)
+
+
+State 312
+
+   91 subtask_def: '(' NAME '(' NAME var_or_const-list ')' . ')'
+
+    ')'  shift, and go to state 324
+
+
+State 313
+
+   97 ordering_def: '(' NAME '<' NAME ')' .
+
+    $default  reduce using rule 97 (ordering_def)
+
+
+State 314
+
+   98 ordering_def: '(' '<' NAME NAME ')' .
+
+    $default  reduce using rule 98 (ordering_def)
+
+
+State 315
+
+  102 constraint_def: '(' KEY_AND constraint_def-list ')' .
+
+    $default  reduce using rule 102 (constraint_def)
+
+
+State 316
+
+   99 constraint_def-list: constraint_def-list constraint_def .
+
+    $default  reduce using rule 99 (constraint_def-list)
+
+
+State 317
+
+  106 constraint_def: '(' KEY_NOT '(' KEY_TYPEOF . typed_var ')' ')'
+
+    VAR_NAME  shift, and go to state 306
+
+    typed_var  go to state 325
+
+
+State 318
+
+  104 constraint_def: '(' KEY_NOT '(' '=' . var_or_const var_or_const ')' ')'
+
+    NAME      shift, and go to state 164
+    VAR_NAME  shift, and go to state 165
+
+    var_or_const  go to state 326
+
+
+State 319
+
+  166 typed_var: VAR_NAME '-' . NAME
+
+    NAME  shift, and go to state 327
+
+
+State 320
+
+  105 constraint_def: '(' KEY_TYPEOF typed_var ')' .
+
+    $default  reduce using rule 105 (constraint_def)
+
+
+State 321
+
+  103 constraint_def: '(' '=' var_or_const var_or_const . ')'
+
+    ')'  shift, and go to state 328
+
+
+State 322
+
+  109 causallink_defs: '(' KEY_AND causallink_def-list . ')'
+  110 causallink_def-list: causallink_def-list . causallink_def
+
+    '('  shift, and go to state 329
+    ')'  shift, and go to state 330
+
+    causallink_def  go to state 331
+
+
+State 323
+
+  112 causallink_def: '(' NAME literal . NAME ')'
+
+    NAME  shift, and go to state 332
+
+
+State 324
+
+   91 subtask_def: '(' NAME '(' NAME var_or_const-list ')' ')' .
+
+    $default  reduce using rule 91 (subtask_def)
+
+
+State 325
+
+  106 constraint_def: '(' KEY_NOT '(' KEY_TYPEOF typed_var . ')' ')'
+
+    ')'  shift, and go to state 333
+
+
+State 326
+
+  104 constraint_def: '(' KEY_NOT '(' '=' var_or_const . var_or_const ')' ')'
+
+    NAME      shift, and go to state 164
+    VAR_NAME  shift, and go to state 165
+
+    var_or_const  go to state 334
+
+
+State 327
+
+  166 typed_var: VAR_NAME '-' NAME .
+
+    $default  reduce using rule 166 (typed_var)
+
+
+State 328
+
+  103 constraint_def: '(' '=' var_or_const var_or_const ')' .
+
+    $default  reduce using rule 103 (constraint_def)
+
+
+State 329
+
+  112 causallink_def: '(' . NAME literal NAME ')'
+
+    NAME  shift, and go to state 310
+
+
+State 330
+
+  109 causallink_defs: '(' KEY_AND causallink_def-list ')' .
+
+    $default  reduce using rule 109 (causallink_defs)
+
+
+State 331
+
+  110 causallink_def-list: causallink_def-list causallink_def .
+
+    $default  reduce using rule 110 (causallink_def-list)
+
+
+State 332
+
+  112 causallink_def: '(' NAME literal NAME . ')'
+
+    ')'  shift, and go to state 335
+
+
+State 333
+
+  106 constraint_def: '(' KEY_NOT '(' KEY_TYPEOF typed_var ')' . ')'
+
+    ')'  shift, and go to state 336
+
+
+State 334
+
+  104 constraint_def: '(' KEY_NOT '(' '=' var_or_const var_or_const . ')' ')'
+
+    ')'  shift, and go to state 337
+
+
+State 335
+
+  112 causallink_def: '(' NAME literal NAME ')' .
+
+    $default  reduce using rule 112 (causallink_def)
+
+
+State 336
+
+  106 constraint_def: '(' KEY_NOT '(' KEY_TYPEOF typed_var ')' ')' .
+
+    $default  reduce using rule 106 (constraint_def)
+
+
+State 337
+
+  104 constraint_def: '(' KEY_NOT '(' '=' var_or_const var_or_const ')' . ')'
+
+    ')'  shift, and go to state 338
+
+
+State 338
+
+  104 constraint_def: '(' KEY_NOT '(' '=' var_or_const var_or_const ')' ')' .
+
+    $default  reduce using rule 104 (constraint_def)
