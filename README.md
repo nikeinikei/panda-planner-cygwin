@@ -29,7 +29,14 @@ cd pandaPIparser
 make
 cd ..
 
-
+cd pandaPIgrounder
+cd cpddl
+make boruvka opts bliss lpsolve
+make
+cd ../src
+make
+cd ..
+cd ..
 ```
 
 After compiling everything, for a binary distribution you will need:
